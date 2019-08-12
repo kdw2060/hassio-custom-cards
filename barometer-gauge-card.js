@@ -129,33 +129,50 @@ class BarometerGaugeCard extends HTMLElement {
             color: #797575;
             padding-right: .25em;
         }
-      .weeklymin-container{
-            position: absolute;
-            height: inherit;
-            margin-left: 17%;
-            /*transform: rotate(-90deg);*/
+      .gauge-c hr {
+            visibility: hidden;
+//            margin-top: 0;
+//            border-top: 20px solid #17d868;
+//            margin-top: -10px;
+//            clip-path: polygon(0% 50%, 50% 80%, 50% 20%);
         }
-      .weeklymin {
-            position: absolute;
-            padding-top: 25px;
-            z-index: 6;
-            right: 0;
-            border-bottom: 0.75em solid #039be5;
-            border-left: 0.75em solid transparent;
-            transform-origin: 50% 100%;
+      .gauge-d{
+        z-index: 3;
+        position: absolute;
+        width: calc(var(--base-unit) * 4);
+        height: 0;
+        top: calc(var(--base-unit) * 2);
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 0px 0px calc(var(--base-unit) * 2) calc(var(--base-unit) * 2) ;
+        transform-origin: center top;
+        transition: all 1.3s ease-in-out;
+        transform: rotate(45deg);
+      }
+      .gauge-d hr {
+            margin-top: 0;
+            border-top: 14px solid #039be5;
+            margin-top: -7px;
+            clip-path: polygon(0% 0%, 5% 50%, 0% 100%);
         }
-      .weeklymax-container{
-            position: absolute;
-            height: inherit;
-            width: 100%;
-        }
-      .weeklymax{
-            position: absolute;
-            padding-top: 25px;
-            right: 12%;
-            z-index: 6;
-            border-bottom: .75em solid #fd0a07;
-            border-right: .75em solid transparent;
+      .gauge-e{
+        z-index: 3;
+        position: absolute;
+        width: calc(var(--base-unit) * 4);
+        height: 0;
+        top: calc(var(--base-unit) * 2);
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 0px 0px calc(var(--base-unit) * 2) calc(var(--base-unit) * 2) ;
+        transform-origin: center top;
+        transition: all 1.3s ease-in-out;
+        transform: rotate(125deg);
+      }
+      .gauge-e hr {
+            margin-top: 0;
+            border-top: 14px solid #fd0a07;
+            margin-top: -7px;
+            clip-path: polygon(0% 0%, 5% 50%, 0% 100%);
         }
     `;
     content.innerHTML = `
@@ -174,13 +191,9 @@ class BarometerGaugeCard extends HTMLElement {
         <div class="gauge-a">
         </div>
         <div class="gauge-b"></div>
-        <div class="gauge-c" id="gauge"></div>
-        <div class="weeklymin-container">
-            <span class="weeklymin"></span>
-        </div>
-        <div class="weeklymax-container">
-            <span class="weeklymax"></span>
-        </div>
+        <div class="gauge-c" id="gauge"><hr></div>
+        <div class="gauge-d" id="recentMin"><hr></div>
+        <div class="gauge-e" id="recentMax"><hr></div>
         <div class="gauge-data">
             <div id="percent"></div>
             <div id="title"></div>
@@ -265,7 +278,7 @@ class BarometerGaugeCard extends HTMLElement {
   set hass(hass) {
     const config = this._config;
     const entityState = this._getEntityStateValue(hass.states[config.entity], config.attribute);
-    //logic to read out weekly min and max values to be added here
+    
     let measurement = "";
     if (config.measurement == null)
       measurement = hass.states[config.entity].attributes.unit_of_measurement;
@@ -280,6 +293,11 @@ class BarometerGaugeCard extends HTMLElement {
       root.getElementById("gauge").style.transform = `rotate(${turn}turn)`;
       root.getElementById("gauge").style.backgroundColor = this._computeSeverity(entityState, config.severity);
       this._entityState = entityState;
+    //start of logic for recent min and max values - to be worked on
+//      const turn2 = this._translateTurn(state_x, config) /10;
+//      const turn3 = this._translateTurn(state_y, config) /10;
+//      root.getElementById("recentMin").style.transform = `rotate(${turn2}turn)`;
+//      root.getElementById("recentMax").style.transform = `rotate(${turn3}turn)`;
     }
     root.lastChild.hass = hass;
   }
