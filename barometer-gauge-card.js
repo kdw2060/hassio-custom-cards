@@ -6,8 +6,8 @@ class BarometerGaugeCard extends HTMLElement {
   setConfig(config) {
     if (!config.entity) {
       throw new Error('Please define an entity');
-    }
-
+    } 
+      
     const root = this.shadowRoot;
     if (root.lastChild) root.removeChild(root.lastChild);
 
@@ -15,7 +15,59 @@ class BarometerGaugeCard extends HTMLElement {
     if (!cardConfig.scale) cardConfig.scale = "50px";
     cardConfig.min = 960;
     cardConfig.max = 1060;
-
+    const apitoken = cardConfig.apitoken;
+    let minmaxhistory = cardConfig.minmaxhistory;
+    let needle = cardConfig.needle;
+      
+    function getMax(arr, prop) {
+        var max;
+        for (var i=0 ; i<arr.length ; i++) {
+            if (!max || parseFloat(arr[i][prop]) > parseFloat(max[prop]))
+            max = arr[i];
+            }
+        return max;
+            };
+    function getMin(arr, prop) {
+        var min;
+        for (var i=0 ; i<arr.length ; i++) {
+        if (!min || parseFloat(arr[i][prop]) < parseFloat(min[prop]))
+            min = arr[i];
+            }
+        return min;
+            };
+    const headers = { Authorization: `Bearer ${apitoken}`, };
+    let now = new Date;
+    let nowIso = now.toISOString();
+    let notnow = new Date(new Date().setDate(new Date().getDate()-minmaxhistory));
+    let notnowIso = notnow.toISOString();
+    
+    function getApiData() {
+    return fetch('http://hassio.local:8123/api/history/period/'+ notnowIso + '?filter_entity_id=' + cardConfig.entity + '&end_time=' + nowIso, { headers })
+        .then(response => response.json())
+        .then((responseData) => {
+        return responseData;
+        })
+        .catch(function(error){
+        console.log(error);
+        })      
+    }
+    
+    getApiData().then(function(data){
+        let historicSensorStates = data;
+        let maxval = parseFloat(getMax(historicSensorStates[0], "state").state);
+        let minval = parseFloat(getMin(historicSensorStates[0], "state").state);
+        function translateTurn(value) {
+            return 5 * (value - 960) / (1060 - 960)
+        }
+        const turn2 = translateTurn(minval) /10;
+        const turn3 = translateTurn(maxval) /10;
+        root.getElementById("recentMin").style.transform = `rotate(${turn2}turn)`;
+        root.getElementById("recentMax").style.transform = `rotate(${turn3}turn)`;
+        root.getElementById("recentMinVal").innerHTML = minval;
+        root.getElementById("recentMaxVal").innerHTML = maxval;
+    });
+    
+      
     const entityParts = this._splitEntityAndAttribute(cardConfig.entity);
     cardConfig.entity = entityParts.entity;
     if (entityParts.attribute) cardConfig.attribute = entityParts.attribute;
@@ -52,12 +104,12 @@ class BarometerGaugeCard extends HTMLElement {
         z-index: 3;
         position: absolute;
         background-color: var(--paper-card-background-color);
-        width: calc(var(--base-unit) * 2.5);
-        height: calc(var(--base-unit) * 1.35);
-        top: calc(var(--base-unit) * .75);
-        margin-left: calc(var(--base-unit) * 0.75);
+        width: calc(var(--base-unit) * 3.5);
+        height: calc(var(--base-unit) * 2);
+        top: calc(var(--base-unit) * .25);
+        margin-left: calc(var(--base-unit) * 0.25);
         margin-right: auto;
-        border-radius: calc(var(--base-unit) * 2.5) calc(var(--base-unit) * 2.5) 0px 0px ;
+        border-radius: calc(var(--base-unit) * 3.5) calc(var(--base-unit) * 3.5) 0px 0px ;
       }
       .gauge-c{
         z-index: 2;
@@ -91,7 +143,7 @@ class BarometerGaugeCard extends HTMLElement {
         padding-top: calc(var(--base-unit) * 0.15);
         font-size: calc(var(--base-unit) * 0.30);
       }
-      .gauge-icons{
+      #gauge-icons{
             width: calc(var(--base-unit) * 4);
             height: calc(var(--base-unit) * 2.5);
             text-align: center;
@@ -122,19 +174,18 @@ class BarometerGaugeCard extends HTMLElement {
       .gauge-footer .minval{
             float: left;
             color: #797575;
-            padding-left: .5em;
         }
       .gauge-footer .maxval{
             float: right;
             color: #797575;
-            padding-right: .25em;
         }
       .gauge-c hr {
             visibility: hidden;
-//            margin-top: 0;
-//            border-top: 20px solid #17d868;
-//            margin-top: -10px;
-//            clip-path: polygon(0% 50%, 50% 80%, 50% 20%);
+            margin-top: 0;
+            border-top: 20px solid;
+            border-top-color: var(--label-badge-yellow);
+            margin-top: -10px;
+            clip-path: polygon(0% 50%, 50% 80%, 50% 20%);
         }
       .gauge-d{
         z-index: 3;
@@ -153,7 +204,7 @@ class BarometerGaugeCard extends HTMLElement {
             margin-top: 0;
             border-top: 14px solid #039be5;
             margin-top: -7px;
-            clip-path: polygon(0% 0%, 5% 50%, 0% 100%);
+            clip-path: polygon(0% 0%, 4% 50%, 0% 100%);
         }
       .gauge-e{
         z-index: 3;
@@ -172,11 +223,19 @@ class BarometerGaugeCard extends HTMLElement {
             margin-top: 0;
             border-top: 14px solid #fd0a07;
             margin-top: -7px;
-            clip-path: polygon(0% 0%, 5% 50%, 0% 100%);
+            clip-path: polygon(0% 0%, 4% 50%, 0% 100%);
+        }
+      #recentMinVal, #recentMaxVal {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.05);
+        margin-top: -.55em;
+        left: .5em;
+        transform: rotate(-90deg);
+        opacity: 0;
         }
     `;
     content.innerHTML = `
-    <div class="gauge-icons">
+    <div id="gauge-icons">
         <svg class="weathericon-pouring" style="width: 18px;height: 18px;" viewBox="0 0 24 24">
     <path fill="#607D8B" d="M9,12C9.53,12.14 9.85,12.69 9.71,13.22L8.41,18.05C8.27,18.59 7.72,18.9 7.19,18.76C6.65,18.62 6.34,18.07 6.5,17.54L7.78,12.71C7.92,12.17 8.47,11.86 9,12M13,12C13.53,12.14 13.85,12.69 13.71,13.22L11.64,20.95C11.5,21.5 10.95,21.8 10.41,21.66C9.88,21.5 9.56,20.97 9.7,20.43L11.78,12.71C11.92,12.17 12.47,11.86 13,12M17,12C17.53,12.14 17.85,12.69 17.71,13.22L16.41,18.05C16.27,18.59 15.72,18.9 15.19,18.76C14.65,18.62 14.34,18.07 14.5,17.54L15.78,12.71C15.92,12.17 16.47,11.86 17,12M17,10V9A5,5 0 0,0 12,4C9.5,4 7.45,5.82 7.06,8.19C6.73,8.07 6.37,8 6,8A3,3 0 0,0 3,11C3,12.11 3.6,13.08 4.5,13.6V13.59C5,13.87 5.14,14.5 4.87,14.96C4.59,15.43 4,15.6 3.5,15.32V15.33C2,14.47 1,12.85 1,11A5,5 0 0,1 6,6C7,3.65 9.3,2 12,2C15.43,2 18.24,4.66 18.5,8.03L19,8A4,4 0 0,1 23,12C23,13.5 22.2,14.77 21,15.46V15.46C20.5,15.73 19.91,15.57 19.63,15.09C19.36,14.61 19.5,14 20,13.72V13.73C20.6,13.39 21,12.74 21,12A2,2 0 0,0 19,10H17Z"></path>
         </svg>
@@ -187,14 +246,14 @@ class BarometerGaugeCard extends HTMLElement {
     <path fill="#607D8B" d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"></path>
         </svg>
     </div>
-    <div class="container">
-        <div class="gauge-a">
+    <div class="container" id="container">
+        <div class="gauge-a" id="gauge-a">
         </div>
         <div class="gauge-b"></div>
-        <div class="gauge-c" id="gauge"><hr></div>
-        <div class="gauge-d" id="recentMin"><hr></div>
-        <div class="gauge-e" id="recentMax"><hr></div>
-        <div class="gauge-data">
+        <div class="gauge-c" id="gauge"><hr id="needle"></div>
+        <div class="gauge-d" id="recentMin"><span id='recentMinVal'></span><hr id='minpointer'></div>
+        <div class="gauge-e" id="recentMax"><span id='recentMaxVal'></span><hr id='maxpointer'></div>
+        <div class="gauge-data" id="gauge-data">
             <div id="percent"></div>
             <div id="title"></div>
         </div>
@@ -211,6 +270,31 @@ class BarometerGaugeCard extends HTMLElement {
     });
     root.appendChild(card);
     this._config = cardConfig;
+      
+    if (needle === true) {
+        root.getElementById("gauge-a").style.backgroundColor = '#dedede';
+        root.getElementById("gauge").style.zIndex = '3';
+        root.getElementById("gauge").style.backgroundColor = '#f4b40000';
+        root.getElementById("needle").style.visibility = 'visible';
+        root.getElementById("gauge-icons").style.paddingTop = '.15em';
+        root.getElementById("percent").style.paddingTop = '2.5em';
+        root.getElementById("gauge-data").style.zIndex = '7';
+        root.getElementById("container").style.overflow = 'visible';
+        card.style.height = 'calc(var(--base-unit)*4.4)';
+    }
+    root.getElementById("minpointer").onmouseenter = function() {
+        root.getElementById("recentMinVal").style.opacity = '1';
+        console.log('mouseover');
+        }
+    root.getElementById("minpointer").onmouseleave = function() {
+        root.getElementById("recentMinVal").style.opacity = '0';
+        }
+    root.getElementById("maxpointer").onmouseenter = function() {
+        root.getElementById("recentMaxVal").style.opacity = '1';
+        }
+    root.getElementById("maxpointer").onmouseleave = function() {
+        root.getElementById("recentMaxVal").style.opacity = '0';
+        }
   }
 
   _splitEntityAndAttribute(entity) {
@@ -246,7 +330,7 @@ class BarometerGaugeCard extends HTMLElement {
       red: "var(--label-badge-red)",
       green: "var(--label-badge-green)",
       amber: "var(--label-badge-yellow)",
-      normal: "var(--label-badge-blue)",
+      normal: "var(--label-badge-yellow)",
     }
     if (!sections) return severityMap["normal"];
     let sortable = [];
@@ -292,12 +376,8 @@ class BarometerGaugeCard extends HTMLElement {
       const turn = this._translateTurn(entityState, config) / 10;
       root.getElementById("gauge").style.transform = `rotate(${turn}turn)`;
       root.getElementById("gauge").style.backgroundColor = this._computeSeverity(entityState, config.severity);
+      root.getElementById("needle").style.borderTopColor = this._computeSeverity(entityState, config.severity);
       this._entityState = entityState;
-    //start of logic for recent min and max values - to be worked on
-//      const turn2 = this._translateTurn(state_x, config) /10;
-//      const turn3 = this._translateTurn(state_y, config) /10;
-//      root.getElementById("recentMin").style.transform = `rotate(${turn2}turn)`;
-//      root.getElementById("recentMax").style.transform = `rotate(${turn3}turn)`;
     }
     root.lastChild.hass = hass;
   }
