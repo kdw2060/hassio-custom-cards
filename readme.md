@@ -27,7 +27,7 @@ Add a custom card in your lovelace yaml and set its options:
 - type: "custom:barometer-gauge-card"
   entity: ...
   apitoken: "..."
-  minmaxhistory: 3á
+  minmaxhistory: 3
   ...
 ```
 
