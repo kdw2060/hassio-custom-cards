@@ -75,7 +75,7 @@ class NMBSRouteBoardCard extends HTMLElement {
           if (delay == 0) {delayString = '';}
           else {delay = delay / 60; delayString = "+" + delay + "'";}
 
-          let row = '<tr><td class="time">'+ hours + ':' + minutes + '<span class="delay">' + delayString + '</span></td><td class="platform"><span class="platformNumber">' + platform + '</span></td><td class="direction">' + direction + '</td></tr>';
+          let row = '<tr><td class="time">'+ hours + ':' + minutes + '<span class="delay"> ' + delayString + '</span></td><td class="platform"><span class="platformNumber">' + platform + '</span></td><td class="direction">' + direction + '</td></tr>';
 
           table = table + row;
         }
