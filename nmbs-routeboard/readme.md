@@ -22,7 +22,7 @@ Also include the webfont if you want to use it:
 ```
 
 ## Usage
-Add a custom card in your lovelace yaml view and set its options. All options are required.
+Add a custom card in your lovelace yaml view and set its options. All options except 'show' are required.
 
 Example configuration: 
 ```yaml
