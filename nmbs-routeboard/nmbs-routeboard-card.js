@@ -32,7 +32,6 @@ class NMBSRouteBoardCard extends HTMLElement {
                 <th>Vertrek</th>
                 <th>Spoor</th>
                 <th>Richting</th>
-                <th>Vertraging</th>
             </tr>
             `
             }
@@ -42,7 +41,6 @@ class NMBSRouteBoardCard extends HTMLElement {
                 <th>Départ</th>
                 <th>Voie</th>
                 <th>Direction</th>
-                <th>Délai</th>
             </tr>
             `
             }
@@ -52,7 +50,6 @@ class NMBSRouteBoardCard extends HTMLElement {
                 <th>Departure</th>
                 <th>Track</th>
                 <th>Direction</th>
-                <th>Delay</th>
             </tr>
             `
             }
@@ -62,22 +59,23 @@ class NMBSRouteBoardCard extends HTMLElement {
                 <th>Abfahrt</th>
                 <th>Gleis</th>
                 <th>Bestimmungsort</th>
-                <th>Verspätung</th>
             </tr>
             `
             }
-        for (let i=0 ; i < data.connection.length ; i++) {
+        let y = data.connection.length;
+        if (cardConfig.show) {y= cardConfig.show;}
+        for (let i=0 ; i < y ; i++) {
           let scheduledTime = new Date(data.connection[i].departure.time * 1000);
           let hours = scheduledTime.getHours();
-          let minutes = scheduledTime.getMinutes();
+          let minutes = ('0' + scheduledTime.getMinutes()).slice(-2);
           let platform = data.connection[i].departure.platform;
           let direction = data.connection[i].arrival.direction.name;
           let delay = data.connection[i].departure.delay;
           let delayString;
           if (delay == 0) {delayString = '';}
-          else {delay = delay / 60; delayString = delay + "'";}
+          else {delay = delay / 60; delayString = "+" + delay + "'";}
 
-          let row = '<tr><td class="time">'+ hours + ':' + minutes + '</td><td class="platform"><span class="platformNumber">' + platform + '</span></td><td class="direction">' + direction + '</td><td class="delay">' + delayString + '</td></tr>';
+          let row = '<tr><td class="time">'+ hours + ':' + minutes + '<span class="delay">' + delayString + '</span></td><td class="platform"><span class="platformNumber">' + platform + '</span></td><td class="direction">' + direction + '</td></tr>';
 
           table = table + row;
         }
@@ -92,7 +90,7 @@ class NMBSRouteBoardCard extends HTMLElement {
     const card = document.createElement('ha-card');
     const content = document.createElement('div');
     content.innerHTML = `
-    <div id="title" class="card-header"></div>
+    <div id="title" class="cardHeader"></div>
     <div class="container">
       <div class="tableContainer">
         <table id="trains"></table>

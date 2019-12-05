@@ -9,7 +9,7 @@ The card is deliberately unstyled, but all elements have css class attributes so
 However, I have included the webfont I'm using in my personal style for you if you wish to use this as well. [Attribution for included font](https://www.fontsquirrel.com/license/BPdots)
 
 ## Installing
-Upload all files to your custom cards folder of your home assistant instance. Add these lines to the resources section of your ui-lovelace.yaml (adapt the folder name if necessary):
+Upload all files to your custom cards folder of your home assistant instance. Add these lines to the resources section of your ui-lovelace.yaml (adapt the folder name if necessary, adapt the version number when upgrading):
 
 ```yaml
 - url: /local/custom_cards/nmbs-routeboard-card.js?v=0.001
@@ -30,6 +30,7 @@ Example configuration:
   departureStation: 'Antwerpen-Berchem'
   arrivalStation: 'Brussel-Centraal'
   lang: 'nl'
+  show: 4
 ```
 
 ## Options
@@ -40,6 +41,7 @@ Example configuration:
 | departureStation | string | **Required** | a station that's listed in https://api.irail.be/stations/
 | arrivalStation | string | **Required** | a station that's listed in https://api.irail.be/stations/
 | lang | string | **Required** | choose between `nl`, `fr`, `en`, `de`  (table header and station names will be translated)
+| show | number (int) | optional | the amount of trains to show (min 1 - max 6)
 
 ## Styling:
 
@@ -50,12 +52,12 @@ You can address these elements and css classes:
 | table | the `<table>` element
 | th | the first row / header of the table
 | tr | other table rows
-| .card-header | the card title (your route)
+| .cardHeader | the card title (your route)
 | .tableContainer | can be used to style the background of the table
 | .time |  first column of table row (`<tr>` element)
+| .delay | a `<span>` element within the time column
 | .platform | second column of table row (`<tr>` element)
 | .platformNumber | a `<span>` element containing the track number
 | .direction | third column of table row (`<tr>` element)
-| .delay | fourth column of table row (`<tr>` element)
 
 
