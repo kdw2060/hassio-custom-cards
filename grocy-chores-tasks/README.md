@@ -6,15 +6,15 @@ This card exposes the Tasks and Chores you have set in Grocy and allows you to m
 
 ## Installation and configuration
 
-1. This card depends on the accompanying [Grocy api-wrapper]() I made, so make sure to install this first.
+1. This card depends on the accompanying [Grocy api-wrapper](https://github.com/kdw2060/hassio-addons/tree/master/hassio-addon-grocy-api-wrapper) I made, so make sure to install this first.
 2. Copy the .js file to the config > www > custom_cards folder of Home Assistant (the folder path may be differten on your system)
 3. Add these lines to your `ui-lovelace.yaml` file:
-```
+```yaml
 - url: /local/custom_cards/grocy-chores-tasks-card.js?v=0.001
   type: module
 ```
 4. Include the card in a lovelace view:
-```
+```yaml
 cards:
   - type: custom:grocy-chores-tasks
     title: Title goes here
