@@ -212,9 +212,11 @@ class GrocyChoresTasksCard extends LitElement {
         `
       <ha-card>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-        <div id="title" class="cardHeader">` +
+        <div id="title" class="cardHeader title is-4">` +
         cardTitle +
-        `</div>
+        `<span class="icon is-refresh-button"><i><svg style="width:24px;height:24px" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+    </svg></i></span></div>
         <div class="container">
           <div>` +
         tasksDiv +
@@ -250,22 +252,23 @@ class GrocyChoresTasksCard extends LitElement {
         fetch(grocyApiWrapperUrl + "/trackChore?id=" + id + '&user=' + user, {method: "POST"})
           .then(response => {if (response.ok) {console.log("track chore POST done");}})
           .catch(function(error) {console.log(error);})
-
+      }
       Array.from(className2).forEach(function(element) {
         element.addEventListener("click", trackChore);
       });
       // not implemented, would require using /objects/tasks api request for showing the finished tasks as well
       // taskUndo(id) {
       //   fetch( grocyApiUrl + '/api/tasks/'+ id + '/undo')
-      //       .then(response => console.log(response)
-      //       .catch(function(error){
-      //       console.log(error);
-      //       }))
-      // };
     }
-    }
+    let refreshbutton = this.shadowRoot.querySelectorAll(".is-refresh-button");
+      var refreshData = function() {
+        fetch(grocyApiWrapperUrl + "/refreshAll", {method: "GET"})
+          .then(response => {if (response.ok) {console.log("refreshing Tasks done");}})
+          .catch(function(error) {console.log(error);})
+      }
+      refreshbutton[0].addEventListener("click", refreshData);
     console.log("render loop done");
-  }
+    }
 
   setConfig(config) {
     if (!config.grocyApiWrapperUrl) {
@@ -310,6 +313,9 @@ class GrocyChoresTasksCard extends LitElement {
       }
       .cardHeader {
         margin-bottom: 0.5em;
+      }
+      .icon {
+        float: right;
       }
     `;
   }
