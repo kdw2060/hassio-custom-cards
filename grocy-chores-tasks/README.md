@@ -4,6 +4,9 @@ This card exposes the Tasks and Chores you have set in Grocy and allows you to m
 
 ![](chores-tasks-card.png)
 
+The card uses the Bulma css framework for the layout and some basic styling. As always you can make your own styles with card-mod.
+When you track a chore or complete a task the card will automatically refresh, but this will take some time as the Grocy api works pretty slowly. You can also refresh the data manually at any time using the refresh icon
+
 ## Installation and configuration
 
 1. This card depends on the accompanying [Grocy api-wrapper](https://github.com/kdw2060/hassio-addons/tree/master/hassio-addon-grocy-api-wrapper) I made, so make sure to install this first.
@@ -20,5 +23,3 @@ cards:
     title: Title goes here
     grocyApiWrapperUrl: *api wrapper url including port* e.g. 'http://192.168.1.5:3003'
 ```
-
-The card uses the Bulma css framework for the layout and some basic styling. As always you can make your own styles with card-mod.
