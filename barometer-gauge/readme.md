@@ -27,6 +27,7 @@ Add a custom card in your lovelace view yaml and set its options:
 - type: "custom:barometer-gauge-card"
   entity: ...
   apitoken: "..."
+  apiBaseUrl: "..." 
   minmaxhistory: 3
   ...
 ```
@@ -39,6 +40,7 @@ Add a custom card in your lovelace view yaml and set its options:
 | entity | string | **Required** | `sensor.xyz`
 | minmaxhistory | number | **Required** | e.g.: `3` (Number of days to go back in history for the blue and red markers. What value works for you also depends on other settings you might have in your config.)
 | apitoken | string | **Required** | `"api-token"` [request a Long Lived Access Token via your profile page](https://www.home-assistant.io/docs/authentication/#your-account-profile)
+| apiBaseUrl | string | **Required** | The url your Home Assistant instance is running on e.g. 'http://hassio.local:8123' or 'http://192.168.1.2:8123'
 | attribute | string | optional | If set, this attribute of the entity is used, instead of its state
 | title | string | optional | Name to display on card
 | measurement | string | optional | If not set, uses the unit_of_measurement on the entity
