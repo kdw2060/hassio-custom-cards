@@ -3,6 +3,7 @@ class BarometerGaugeCard extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
   }
+
   setConfig(config) {
     if (!config.entity) {
       throw new Error('Please define an entity');
@@ -18,7 +19,7 @@ class BarometerGaugeCard extends HTMLElement {
     const apitoken = cardConfig.apitoken;
     const apiBaseUrl = cardConfig.apiBaseUrl;
     let minmaxhistory = cardConfig.minmaxhistory;
-    let needle = cardConfig.needle;
+    let needleBool = cardConfig.needle;
       
     function getMax(arr, prop) {
         var max;
@@ -56,8 +57,8 @@ class BarometerGaugeCard extends HTMLElement {
         function translateTurn(value) {
             return 5 * (value - 960) / (1060 - 960)
         }
-        const turn2 = translateTurn(minval) /10;
-        const turn3 = translateTurn(maxval) /10;
+        const turn2 = (translateTurn(minval) /10) + 0.01;
+        const turn3 = (translateTurn(maxval) /10) + 0.01;
         root.getElementById("recentMin").style.transform = `rotate(${turn2}turn)`;
         root.getElementById("recentMax").style.transform = `rotate(${turn3}turn)`;
         root.getElementById("recentMinVal").innerHTML = minval;
@@ -111,7 +112,6 @@ class BarometerGaugeCard extends HTMLElement {
       .gauge-c{
         z-index: 2;
         position: absolute;
-        background-color: var(--label-badge-yellow);
         width: calc(var(--base-unit) * 4);
         height: calc(var(--base-unit) * 2);
         top: calc(var(--base-unit) * 2);
@@ -176,13 +176,11 @@ class BarometerGaugeCard extends HTMLElement {
             float: right;
             color: #797575;
         }
-      .gauge-c hr {
-            visibility: hidden;
-            margin-top: 0;
-            border-top: 20px solid;
-            border-top-color: var(--label-badge-yellow);
-            margin-top: -10px;
-            clip-path: polygon(0% 50%, 50% 80%, 50% 20%);
+      #needle {
+        visibility: hidden;
+        overflow: visible;
+        fill: var(--label-badge-yellow);
+        transform: translateY(-5px);     
         }
       .gauge-d{
         z-index: 3;
@@ -197,11 +195,8 @@ class BarometerGaugeCard extends HTMLElement {
         transition: all 1.3s ease-in-out;
         transform: rotate(45deg);
       }
-      .gauge-d hr {
-            margin-top: 0;
-            border-top: 14px solid #039be5;
-            margin-top: -7px;
-            clip-path: polygon(0% 0%, 4% 50%, 0% 100%);
+      .gauge-d svg, .gauge-e svg {
+          float: left;
         }
       .gauge-e{
         z-index: 3;
@@ -216,12 +211,6 @@ class BarometerGaugeCard extends HTMLElement {
         transition: all 1.3s ease-in-out;
         transform: rotate(125deg);
       }
-      .gauge-e hr {
-            margin-top: 0;
-            border-top: 14px solid #fd0a07;
-            margin-top: -7px;
-            clip-path: polygon(0% 0%, 4% 50%, 0% 100%);
-        }
       #recentMinVal, #recentMaxVal {
         position: absolute;
         background: rgba(0, 0, 0, 0.05);
@@ -247,9 +236,9 @@ class BarometerGaugeCard extends HTMLElement {
         <div class="gauge-a" id="gauge-a">
         </div>
         <div class="gauge-b"></div>
-        <div class="gauge-c" id="gauge"><hr id="needle"></div>
-        <div class="gauge-d" id="recentMin"><span id='recentMinVal'></span><hr id='minpointer'></div>
-        <div class="gauge-e" id="recentMax"><span id='recentMaxVal'></span><hr id='maxpointer'></div>
+        <div class="gauge-c" id="gauge"><svg id="needle"><polygon points=" 105,15 115,0 0,5"></polygon></svg></div>
+        <div class="gauge-d" id="recentMin"><span id='recentMinVal'></span><svg id='minpointer' height="24" width="24"><polygon points="9,9 2,20 0,0" style="fill:#039be5" /></svg></div>
+        <div class="gauge-e" id="recentMax"><span id='recentMaxVal'></span><svg id='maxpointer' height="24" width="24"><polygon points="9,9 2,20 0,0" style="fill:#fd0a07" /></svg></div>
         <div class="gauge-data" id="gauge-data">
             <div id="percent"></div>
             <div id="title"></div>
@@ -268,16 +257,19 @@ class BarometerGaugeCard extends HTMLElement {
     root.appendChild(card);
     this._config = cardConfig;
       
-    if (needle === true) {
+    if (needleBool === true) {
         root.getElementById("gauge-a").style.backgroundColor = '#dedede';
         root.getElementById("gauge").style.zIndex = '3';
-        root.getElementById("gauge").style.backgroundColor = '#f4b40000';
+        root.getElementById("gauge").style.backgroundColor = '#ffffff00';
         root.getElementById("needle").style.visibility = 'visible';
         root.getElementById("gauge-icons").style.paddingTop = '.15em';
         root.getElementById("percent").style.paddingTop = '2.5em';
         root.getElementById("gauge-data").style.zIndex = '7';
         root.getElementById("container").style.overflow = 'visible';
         card.style.height = 'calc(var(--base-unit)*4.4)';
+    }
+    if (needleBool !== true) {
+      root.getElementById("gauge").style.backgroundColor = 'var(--label-badge-yellow)';
     }
     root.getElementById("minpointer").onmouseenter = function() {
         root.getElementById("recentMinVal").style.opacity = '1';
@@ -321,33 +313,6 @@ class BarometerGaugeCard extends HTMLElement {
     return 5 * (value - config.min) / (config.max - config.min)
   }
 
-  _computeSeverity(stateValue, sections) {
-    let numberValue = Number(stateValue);
-    const severityMap = {
-      red: "var(--label-badge-red)",
-      green: "var(--label-badge-green)",
-      amber: "var(--label-badge-yellow)",
-      normal: "var(--label-badge-yellow)",
-    }
-    if (!sections) return severityMap["normal"];
-    let sortable = [];
-    for (let severity in sections) {
-      sortable.push([severity, sections[severity]]);
-    }
-    sortable.sort((a, b) => { return a[1] - b[1] });
-
-    if (numberValue >= sortable[0][1] && numberValue < sortable[1][1]) {
-      return severityMap[sortable[0][0]]
-    }
-    if (numberValue >= sortable[1][1] && numberValue < sortable[2][1]) {
-      return severityMap[sortable[1][0]]
-    }
-    if (numberValue >= sortable[2][1]) {
-      return severityMap[sortable[2][0]]
-    }
-    return severityMap["normal"];
-  }
-
   _getEntityStateValue(entity, attribute) {
     if (!attribute) {
       return entity.state;
@@ -372,9 +337,6 @@ class BarometerGaugeCard extends HTMLElement {
       root.getElementById("title").textContent = config.title;
       const turn = this._translateTurn(entityState, config) / 10;
       root.getElementById("gauge").style.transform = `rotate(${turn}turn)`;
-      root.getElementById("gauge").style.backgroundColor = this._computeSeverity(entityState, config.severity);
-      root.getElementById("needle").style.borderTopColor = this._computeSeverity(entityState, config.severity);
-      this._entityState = entityState;
     }
     root.lastChild.hass = hass;
   }

@@ -7,11 +7,7 @@ Based on [the standard gauge card](https://github.com/custom-cards/gauge-card). 
 | ![standard style](barometer-gauge-card.png "standard style") | ![needle style](barometer-gauge-card-needle.png "needle style")
 
 ## Prerequisites
-This card relies on the home assistant api. Make sure:
-* your Home Assistant instance can be accessed via `http://hassio.local:8123`
-* you have created an api token and set the `apitoken` option (see options)
-
-If these criteria are not met the card will not work.
+This card relies on the home assistant api. Make sure you have created an api token and set the `apitoken` option (see options)
 
 
 ## Usage
@@ -46,12 +42,5 @@ Add a custom card in your lovelace view yaml and set its options:
 | measurement | string | optional | If not set, uses the unit_of_measurement on the entity
 | needle | bool | optional | `false` or `true` set to true for the alternative styling
 | scale | string | optional | Base value for graph visual size
-| severity | object | optional | Severity object. See below
 
-Severity object (use numbers between 960 and 1060):
-
-| Name | Type | Default | Description
-| ---- | ---- | ------- | -----------
-| red | number | **Required** | Value from which to start red color
-| green | number | **Required** | Value from which to start green color
-| amber | number | **Required** | Value from which to start amber color
+**⚠ This card no longer supports the severity map option ⚠**
