@@ -1,4 +1,13 @@
-# Tasks and chores card for Grocy
+# DEPRECATED
+
+I've moved away from building custom add-ons and custom cards for a certain service.
+Have a look at my [Api Consumer](https://github.com/kdw2060/hassio-addons/tree/master/hassio-addon-api-consumer) add-on instead. It has a sample consumer for the Grocy Tasks.
+
+You can use a simple [markdown card](https://www.home-assistant.io/lovelace/markdown/) or the versatile [button card](https://github.com/custom-cards/button-card) to display the information in any way you like.
+
+---
+
+## Tasks and chores card for Grocy
 
 This card exposes the Tasks and Chores you have set in Grocy and allows you to mark tasks as done and chores as executed/tracked.
 

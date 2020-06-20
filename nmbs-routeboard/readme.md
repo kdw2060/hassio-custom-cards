@@ -1,4 +1,13 @@
-# nmbs-routeboard-card
+# DEPRECATED
+
+This card still works, but I've moved away from building custom add-ons and custom cards for a certain service.
+Have a look at my [Api Consumer](https://github.com/kdw2060/hassio-addons/tree/master/hassio-addon-api-consumer) add-on instead. It has a sample consumer for the iRail service.
+
+You can use a simple [markdown card](https://www.home-assistant.io/lovelace/markdown/) or the versatile [button card](https://github.com/custom-cards/button-card) to display the information in any way you like.
+
+---
+
+## nmbs-routeboard-card
 A card to display the next trains leaving a Belgian train station for a given route. The info refreshes every minute.
 
 | Standard (no styling) | Styled
@@ -8,7 +17,7 @@ A card to display the next trains leaving a Belgian train station for a given ro
 The card is deliberately unstyled, but all elements have css class attributes so you can style it as you wish with [Card Mod](https://github.com/thomasloven/lovelace-card-mod).
 However, I have included the webfont I'm using in my personal style for you if you wish to use this as well. [Attribution for included font](https://www.fontsquirrel.com/license/BPdots)
 
-## Installing
+### Installing
 Upload all files to your custom cards folder of your home assistant instance. Add these lines to the resources section of your ui-lovelace.yaml (adapt the folder name if necessary, adapt the version number when upgrading):
 
 ```yaml
@@ -21,7 +30,7 @@ Also include the webfont if you want to use it:
   type: css
 ```
 
-## Usage
+### Usage
 Add a custom card in your lovelace yaml view and set its options. All options except 'show' are required.
 
 Example configuration: 
@@ -33,7 +42,7 @@ Example configuration:
   show: 4
 ```
 
-## Options
+### Options
 
 | Name | Type | Needed? | Value
 | ---- | ---- | ------- | -----------
@@ -43,7 +52,7 @@ Example configuration:
 | lang | string | **Required** | choose between `nl`, `fr`, `en`, `de`  (table header and station names will be translated)
 | show | number (int) | optional | the amount of trains to show (min 1 - max 6)
 
-## Styling:
+### Styling:
 
 You can address these elements and css classes:
 
