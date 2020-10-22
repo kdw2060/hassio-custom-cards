@@ -4,9 +4,11 @@ OF
 layout-card
 ===========
 
-I don't plan on maintaining this card! This is for demonstration purposes only. I have opened a PR with the author of the original lay-out-card.
+The additions to the original layout-card make it easier to define a css grid layout and to achieve a responsive layout.
 
-Scroll down to the grid layout section for information on the grid-areas properties that are added in this fork.
+I don't plan on maintaining this card! This is for demonstration purposes only. I have opened a PR with the author of the original lay-out-card to include the changes there.
+
+[Scroll down to the grid layout section](#grid-layout-with-gridareas) for information on the grid-areas properties that are added in this fork.
 
 ---
 
@@ -249,7 +251,7 @@ cards:
 You can also ommit `gridrows` or tweak `gridgap` and `gridplace` to get different results. I don't know how this works, but feel free to play around!
 
 ---
-
+### grid layout with gridareas
 You can also create a grid with the `gridareas` option. You define the gridareas on the layout-card and **MUST** set `gridarea` on every card in stead of the `gridrow` and `gridcol` options. You can optionaly set `align_self` and `justify_self` css properties on the individial cards too.
 
 To create a responsive layout, optionally `gridcols_medium`, `gridareas_medium`, `gridcols_small`, `gridareas_small` can be defined on the layout-card. The breakpoints are 500px and 800px.
@@ -332,7 +334,7 @@ cards:
 ```
 ![responsive-grid](img/grid-responsive.gif)
 
-> Hint: Play with the [*align-self*](https://developer.mozilla.org/en-US/docs/Web/CSS/align-self) and [*justify-self*](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-self) properties on the cards for even more control on where cards end up within their area.
+> Hint: Play with the [*align-self*](https://developer.mozilla.org/en-US/docs/Web/CSS/align-self) and [*justify-self*](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-self) properties on the cards for even more control on where cards end up within their area. (*Gif doesn show the usage of these properties*)
 
 ## Tweaking layouts
 
