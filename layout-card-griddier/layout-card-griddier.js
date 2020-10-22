@@ -701,10 +701,10 @@
         overflow-x: hidden;
       }
       .column:first-child {
-        margin-left: -4px;
+        margin-left: 0px;
       }
       .column:last-child {
-        margin-right: -4px;
+        margin-right: 0px;
       }
       :host(.panel) .column {
         margin: 0;
@@ -737,20 +737,20 @@
         height: 0;
       }
       #staging.grid {
-        margin: 0 -4px;
+        margin: 0;
         grid-template-areas: var(--gridareas_large);
         grid-template-columns: var(--gridcols_large);
       }
       @media(max-width: 1149px) {
         #staging.grid {
-          margin: 0 -4px;
+          margin: 0px;
           grid-template-areas: var(--gridareas_medium);
           grid-template-columns: var(--gridcols_medium);
         } 
       }
       @media(max-width: 699px) {
         #staging.grid {
-          margin: 0 -4px;
+          margin: 0px;
           grid-template-areas: var(--gridareas_small);
           grid-template-columns: var(--gridcols_small);
         } 
@@ -765,7 +765,7 @@
       customElements.define("layout-card-griddier", g);
       const t = i(4);
       console.info(
-        `%cLAYOUT-CARD-GRIDDIER IS INSTALLED`,
+        `%cLAYOUT-CARD-GRIDDIER v002 IS INSTALLED`,
         "color: green; font-weight: bold",
         ""
       );
