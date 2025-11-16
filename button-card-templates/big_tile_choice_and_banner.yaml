@@ -1,0 +1,96 @@
+big_tile:
+  show_icon: false
+  show_state: true
+  entity: binary_sensor.state_thuiswerkdagkris
+  # on/off state value of entity is reworded
+  state_display: '[[[ if (entity.state === "on") return "Actief"; else return entity.state; ]]]'
+  # no tap action on the card as we'll work with 2 child button cards
+  tap_action:
+    action: none
+  custom_fields:
+    custom_icon: >-
+      [[[ return `<img src="/local/images/icons8-housekeeping-96.png"/>` ]]]
+    option1:
+      card:
+        type: custom:button-card
+        lock:
+          enabled: >
+            [[[
+              if (states["script.thuiswerkdagkris"] == 'on') {
+                return true;
+              }
+              else {return false;}
+            ]]]
+        name: Vandaag
+        styles:
+          card:
+            - color: rgba(0, 0, 0, 0.82)
+            - box-shadow: none
+            - background: rgba(230, 230, 230, 0.75)
+            - margin-top: 15px
+            - min-width: 150px
+            - padding: 10px 0px
+        tap_action:
+          action: call-service
+          service: script.thuiswerkdagkris
+    option2:
+      card:
+        type: custom:button-card
+        lock:
+          enabled: >
+            [[[
+              if (states["script.thuiswerkdagkrismorgen"] == 'on') {
+                return true;
+              }
+              else {return false;}
+            ]]]
+        name: Morgen
+        styles:
+          card:
+            - color: rgba(0, 0, 0, 0.82)
+            - box-shadow: none
+            - background: rgba(230, 230, 230, 0.75)
+            - margin-top: 15px
+            - min-width: 150px
+            - padding: 10px 0px
+        tap_action:
+          action: call-service
+          service: script.thuiswerkdagkrismorgen
+  styles:
+    card:
+      - border-radius: var(--ha-card-border-radius)
+      - box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.16)
+    grid:
+      - grid-template-areas: '"x s" "custom_icon custom_icon" "n n" "option1 option2"'
+      - grid-template-columns: min-content min-content
+      - grid-template-rows: 2fr min-content min-content
+      - align-items: center
+      - justify-content: space-around
+    custom_icon:
+      - opacity: 0.8
+    name:
+      - color: rgba(0, 0, 0, 0.82)
+      - justify-self: center
+      - align-self: start
+      - font-size: 1.2em
+      - font-family: SF UI Text Semibold
+    # The standard 'state' region that all custom button cards have is styled to appear as a banner/label in the top right corner
+    state:
+      - color: white
+      - font-weight: 500
+      - background-color: '#27a498'
+      - transform: rotate(45deg) scale(1) skew(0deg) translate(0px)
+      - position: absolute
+      - top: 19px
+      - right: -50px
+      - line-height: 35px
+      - width: 100px
+      - padding: 0 2em
+      - border-top: 0px
+      - margin: 0
+  # hide the state banner if the state value is 'off'
+  state:
+    - value: 'off'
+      styles:
+        state:
+          - display: none
